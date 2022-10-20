@@ -3,7 +3,7 @@
 """
 
 from token_class import Token
-from const import EOF, INTEGER, PLUS
+from const import EOF, INTEGER, PLUS, MINUS
 
 
 class Interpreter(object):
@@ -11,10 +11,31 @@ class Interpreter(object):
         self.text = text
         self.pos = 0
         self.current_token = None
+        self.current_char = self.text[self.pos]
 
     def error(self):
         """Вызвать исключение"""
         raise Exception('Ошибка разбора строки')
+
+    def advance(self):
+        """Передвинуть текущую позицию и установить текущий символ"""
+        self.pos += 1
+        self.current_char = None if self.pos > len(self.text) - 1 else self.text[self.pos]
+
+    def skip_whitespace(self):
+        """Пропустить пробел"""
+        while self.current_char is not None and self.current_char.isspace():
+            self.advance()
+
+    def integer(self):
+        """
+        Получить число. Позволяет получать многозначные числа путём чтения, пока символы не перестанут быть цифрами
+        """
+        result = ''
+        while self.current_char is not None and self.current_char.isdigit():
+            result += self.current_char
+            self.advance()
+        return int(result)
 
     def get_next_token(self):
         """
@@ -22,21 +43,24 @@ class Interpreter(object):
         Метод разбивает входную строку на токены. Один токен за раз
         :return:
         """
-        text = self.text
-        if self.pos > len(text) - 1:
-            return Token(EOF, None)
+        while self.current_char is not None:
+            if self.current_char.isspace():
+                self.skip_whitespace()
+                continue
 
-        current_char = text[self.pos]
-        if current_char.isdigit():
-            self.pos += 1
-            return Token(INTEGER, int(current_char))
+            if self.current_char.isdigit():
+                return Token(INTEGER, self.integer())
 
-        if current_char == '+':
-            self.pos += 1
-            return Token(PLUS, current_char)
+            if self.current_char == '+':
+                self.advance()
+                return Token(PLUS, '+')
 
-        # дошли досюда = ошибка
-        self.error()
+            if self.current_char == '-':
+                self.advance()
+                return Token(MINUS, '-')
+            # дошли досюда = ошибка
+            self.error()
+        return Token(EOF, None)
 
     def eat(self, token_type):
         """
@@ -55,14 +79,15 @@ class Interpreter(object):
         :return:
         """
         self.current_token = self.get_next_token()
+
         left = self.current_token
         self.eat(INTEGER)
 
         op = self.current_token
-        self.eat(PLUS)
+        self.eat(PLUS) if op.type == PLUS else self.eat(MINUS)
 
         right = self.current_token
         self.eat(INTEGER)
 
-        result = left.value + right.value
+        result = left.value + right.value if op.type == PLUS else left.value - right.value
         return result
