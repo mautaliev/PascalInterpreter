@@ -3,7 +3,7 @@
 """
 
 from token_class import Token
-from const import EOF, INTEGER, PLUS, MINUS
+from const import EOF, INTEGER, PLUS, MINUS, ARITHMETIC
 
 
 class Interpreter(object):
@@ -73,6 +73,12 @@ class Interpreter(object):
         else:
             self.error()
 
+    def term(self):
+        """Возвращает интерпретируемое число"""
+        token = self.current_token
+        self.eat(INTEGER)
+        return token.value
+
     def expr(self):
         """
         Непосредственно интерпретируем
@@ -80,14 +86,13 @@ class Interpreter(object):
         """
         self.current_token = self.get_next_token()
 
-        left = self.current_token
-        self.eat(INTEGER)
-
-        op = self.current_token
-        self.eat(PLUS) if op.type == PLUS else self.eat(MINUS)
-
-        right = self.current_token
-        self.eat(INTEGER)
-
-        result = left.value + right.value if op.type == PLUS else left.value - right.value
+        result = self.term()
+        while self.current_token.type in ARITHMETIC:
+            token = self.current_token
+            if token.type == PLUS:
+                self.eat(PLUS)
+                result = result + self.term()
+            elif token.type == MINUS:
+                self.eat(MINUS)
+                result = result - self.term()
         return result
