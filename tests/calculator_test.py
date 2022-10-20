@@ -1,11 +1,11 @@
 from unittest import TestCase
-from main import Interpreter
+from interpreter import Interpreter
 
 
 class TestCalculator(TestCase):
     def test_plus(self):
         data = {
-            '2+2': 5,
+            '2+2': 4,
             '3+7': 10,
             '9+0': 9
         }
