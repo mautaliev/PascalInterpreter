@@ -2,11 +2,8 @@
 INTEGER = 'INTEGER'
 PLUS = 'PLUS'
 MINUS = 'MINUS'
-MULTY = 'MULTY'
-DIVIDE = 'DIVIDE'
-
-# перечисление арифметических токенов
-ARITHMETIC = [PLUS, MINUS, MULTY, DIVIDE]
+MUL = 'MUL'
+DIV = 'DIV'
 
 # токен конца входной строки
 EOF = 'EOF'

@@ -2,65 +2,18 @@
 Класс интерпретатора
 """
 
-from token_class import Token
-from const import EOF, INTEGER, PLUS, MINUS, ARITHMETIC
+from lexer import Lexer
+from const import INTEGER, MUL, DIV
 
 
 class Interpreter(object):
-    def __init__(self, text):
-        self.text = text
-        self.pos = 0
-        self.current_token = None
-        self.current_char = self.text[self.pos]
+    def __init__(self, lexer: Lexer):
+        self.lexer = lexer
+        self.current_token = self.lexer.get_next_token()
 
     def error(self):
         """Вызвать исключение"""
-        raise Exception('Ошибка разбора строки')
-
-    def advance(self):
-        """Передвинуть текущую позицию и установить текущий символ"""
-        self.pos += 1
-        self.current_char = None if self.pos > len(self.text) - 1 else self.text[self.pos]
-
-    def skip_whitespace(self):
-        """Пропустить пробел"""
-        while self.current_char is not None and self.current_char.isspace():
-            self.advance()
-
-    def integer(self):
-        """
-        Получить число. Позволяет получать многозначные числа путём чтения, пока символы не перестанут быть цифрами
-        """
-        result = ''
-        while self.current_char is not None and self.current_char.isdigit():
-            result += self.current_char
-            self.advance()
-        return int(result)
-
-    def get_next_token(self):
-        """
-        Лексический анализатор
-        Метод разбивает входную строку на токены. Один токен за раз
-        :return:
-        """
-        while self.current_char is not None:
-            if self.current_char.isspace():
-                self.skip_whitespace()
-                continue
-
-            if self.current_char.isdigit():
-                return Token(INTEGER, self.integer())
-
-            if self.current_char == '+':
-                self.advance()
-                return Token(PLUS, '+')
-
-            if self.current_char == '-':
-                self.advance()
-                return Token(MINUS, '-')
-            # дошли досюда = ошибка
-            self.error()
-        return Token(EOF, None)
+        raise Exception('Неверный синтаксис')
 
     def eat(self, token_type):
         """
@@ -69,11 +22,11 @@ class Interpreter(object):
         :return:
         """
         if self.current_token.type == token_type:
-            self.current_token = self.get_next_token()
+            self.current_token = self.lexer.get_next_token()
         else:
             self.error()
 
-    def term(self):
+    def factor(self):
         """Возвращает интерпретируемое число"""
         token = self.current_token
         self.eat(INTEGER)
@@ -84,15 +37,13 @@ class Interpreter(object):
         Непосредственно интерпретируем
         :return:
         """
-        self.current_token = self.get_next_token()
-
-        result = self.term()
-        while self.current_token.type in ARITHMETIC:
+        result = self.factor()
+        while self.current_token.type in (MUL, DIV):
             token = self.current_token
-            if token.type == PLUS:
-                self.eat(PLUS)
-                result = result + self.term()
-            elif token.type == MINUS:
-                self.eat(MINUS)
-                result = result - self.term()
+            if token.type == MUL:
+                self.eat(MUL)
+                result = int(result * self.factor())
+            elif token.type == DIV:
+                self.eat(DIV)
+                result = int(result / self.factor())
         return result
