@@ -6,6 +6,8 @@ from interpreter import Interpreter
 from lexer import Lexer
 
 
+# TODO: обернуть интерпретатор во фласк
+#  + сделать историю ввода (через записи в БД)
 def main():
     while True:
         try:

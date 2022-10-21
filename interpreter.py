@@ -3,7 +3,7 @@
 """
 
 from lexer import Lexer
-from const import INTEGER, MUL, DIV
+from const import INTEGER, PLUS, MINUS, MUL, DIV
 
 
 class Interpreter(object):
@@ -27,16 +27,13 @@ class Interpreter(object):
             self.error()
 
     def factor(self):
-        """Возвращает интерпретируемое число"""
+        """Нетерминальное слово factor"""
         token = self.current_token
         self.eat(INTEGER)
         return token.value
 
-    def expr(self):
-        """
-        Непосредственно интерпретируем
-        :return:
-        """
+    def term(self):
+        """Нетерминальное слово term"""
         result = self.factor()
         while self.current_token.type in (MUL, DIV):
             token = self.current_token
@@ -46,4 +43,17 @@ class Interpreter(object):
             elif token.type == DIV:
                 self.eat(DIV)
                 result = int(result / self.factor())
+        return result
+
+    def expr(self):
+        """Нетерминальное слово expr"""
+        result = self.term()
+        while self.current_token.type in (PLUS, MINUS):
+            token = self.current_token
+            if token.type == PLUS:
+                self.eat(PLUS)
+                result = result + self.term()
+            elif token.type == MINUS:
+                self.eat(MINUS)
+                result = result - self.term()
         return result
