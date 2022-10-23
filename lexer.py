@@ -4,7 +4,7 @@
 """
 
 from token_class import Token
-from const import PLUS, MINUS, MUL, DIV, EOF, INTEGER
+from const import PLUS, MINUS, MUL, DIV, EOF, INTEGER, LPAREN, RPAREN
 
 
 class Lexer(object):
@@ -66,6 +66,14 @@ class Lexer(object):
             if self.current_char == '/':
                 self.advance()
                 return Token(DIV, '/')
+
+            if self.current_char == '(':
+                self.advance()
+                return Token(LPAREN, '(')
+
+            if self.current_char == ')':
+                self.advance()
+                return Token(RPAREN, ')')
             # дошли досюда = ошибка
             self.error()
         return Token(EOF, None)

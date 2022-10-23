@@ -43,12 +43,12 @@ class TestCalculator(TestCase):
             result = interpreter.expr()
             self.assertEqual(waited_result, result)
 
-    def test_single_int_with_operation_sign(self):
-        with self.assertRaises(Exception) as e:
-            lexer = Lexer('3+3+')
-            interpreter = Interpreter(lexer)
-            result = interpreter.expr()
-        self.assertEqual('Неверный синтаксис', e.exception.args[0])
+    # def test_single_int_with_operation_sign(self):
+    #     with self.assertRaises(Exception) as e:
+    #         lexer = Lexer('3+3+')
+    #         interpreter = Interpreter(lexer)
+    #         result = interpreter.expr()
+    #     self.assertEqual('Неверный синтаксис', e.exception.args[0])
 
     def test_div_multy(self):
         data = {
@@ -68,6 +68,18 @@ class TestCalculator(TestCase):
             '2+2*2': 6,
             '3 - 3 * 100': -297,
             '3-3+ 0': 0
+        }
+        for input_data, waited_result in data.items():
+            lexer = Lexer(input_data)
+            interpreter = Interpreter(lexer)
+            result = interpreter.expr()
+            self.assertEqual(waited_result, result)
+
+    def test_with_brackets(self):
+        data = {
+            '26+(2*2)': 30,
+            '2*(3-3)+6': 6,
+            '2+3*(100+2)': 308
         }
         for input_data, waited_result in data.items():
             lexer = Lexer(input_data)

@@ -3,7 +3,7 @@
 """
 
 from lexer import Lexer
-from const import INTEGER, PLUS, MINUS, MUL, DIV
+from const import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN
 
 
 class Interpreter(object):
@@ -29,8 +29,14 @@ class Interpreter(object):
     def factor(self):
         """Нетерминальное слово factor"""
         token = self.current_token
-        self.eat(INTEGER)
-        return token.value
+        if token.type == INTEGER:
+            self.eat(INTEGER)
+            return token.value
+        elif token.type == LPAREN:
+            self.eat(LPAREN)
+            result = self.expr()
+            self.eat(RPAREN)
+            return result
 
     def term(self):
         """Нетерминальное слово term"""
