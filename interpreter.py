@@ -3,7 +3,7 @@
 """
 
 from const import PLUS, MINUS, MUL, DIV
-from abract_syntax_tree import BinOp, Num
+from abract_syntax_tree import BinOp, UnaryOp, Num
 
 
 class NodeVisitor(object):
@@ -32,6 +32,13 @@ class Interpreter(NodeVisitor):
             DIV: lambda x, y: int(x/y)
         }
         return mapping.get(node.op.type)(self.visit(node.left), self.visit(node.right))
+
+    def visit_UnaryOp(self, node: UnaryOp):
+        mapping = {
+            PLUS: lambda x: +x,
+            MINUS: lambda x: -x
+        }
+        return mapping.get(node.op.type)(self.visit(node.expr))
 
     def visit_Num(self, node: Num):
         return node.value

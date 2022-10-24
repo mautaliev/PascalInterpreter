@@ -4,7 +4,7 @@
 
 from lexer import Lexer
 from const import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN
-from abract_syntax_tree import BinOp, Num
+from abract_syntax_tree import BinOp, UnaryOp, Num
 
 
 class Parser(object):
@@ -30,7 +30,15 @@ class Parser(object):
     def factor(self):
         """Нетерминальное слово factor"""
         token = self.current_token
-        if token.type == INTEGER:
+        if token.type == PLUS:
+            self.eat(PLUS)
+            node = UnaryOp(token, self.factor())
+            return node
+        elif token.type == MINUS:
+            self.eat(MINUS)
+            node = UnaryOp(token, self.factor())
+            return node
+        elif token.type == INTEGER:
             self.eat(INTEGER)
             return Num(token)
         elif token.type == LPAREN:

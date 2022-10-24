@@ -93,3 +93,16 @@ class TestCalculator(TestCase):
             interpreter = Interpreter(parser)
             result = interpreter.interpret()
             self.assertEqual(waited_result, result)
+
+    def test_unary_operators(self):
+        data = {
+            '-----3': -3,
+            '5+ --1': 6,
+            '+30/-3': -10
+        }
+        for input_data, waited_result in data.items():
+            lexer = Lexer(input_data)
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            result = interpreter.interpret()
+            self.assertEqual(waited_result, result)

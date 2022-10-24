@@ -16,6 +16,12 @@ class BinOp(AST):
         self.right = right
 
 
+class UnaryOp(AST):
+    def __init__(self, op, expr):
+        self.token = self.op = op
+        self.expr = expr
+
+
 class Num(AST):
     def __init__(self, token: Token):
         self.token = token
