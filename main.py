@@ -2,8 +2,9 @@
 Запуск интерпретатора
 """
 
-from interpreter import Interpreter
+from parser import Parser
 from lexer import Lexer
+from interpreter import Interpreter
 
 
 # TODO: обернуть интерпретатор во фласк
@@ -16,8 +17,9 @@ def main():
             break
         if not text: continue
         lexer = Lexer(text)
-        interpreter = Interpreter(lexer)
-        result = interpreter.expr()
+        parser = Parser(lexer)
+        interpreter = Interpreter(parser)
+        result = interpreter.interpret()
         print(result)
 
 

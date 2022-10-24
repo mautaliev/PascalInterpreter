@@ -1,6 +1,7 @@
 from unittest import TestCase
-from interpreter import Interpreter
+from parser import Parser
 from lexer import Lexer
+from interpreter import Interpreter
 
 
 class TestCalculator(TestCase):
@@ -14,8 +15,9 @@ class TestCalculator(TestCase):
         }
         for input_data, waited_result in data.items():
             lexer = Lexer(input_data)
-            interpreter = Interpreter(lexer)
-            result = interpreter.expr()
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            result = interpreter.interpret()
             self.assertEqual(waited_result, result)
 
     def test_minus(self):
@@ -27,8 +29,9 @@ class TestCalculator(TestCase):
         }
         for input_data, waited_result in data.items():
             lexer = Lexer(input_data)
-            interpreter = Interpreter(lexer)
-            result = interpreter.expr()
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            result = interpreter.interpret()
             self.assertEqual(waited_result, result)
 
     def test_many_operations(self):
@@ -39,14 +42,15 @@ class TestCalculator(TestCase):
         }
         for input_data, waited_result in data.items():
             lexer = Lexer(input_data)
-            interpreter = Interpreter(lexer)
-            result = interpreter.expr()
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            result = interpreter.interpret()
             self.assertEqual(waited_result, result)
 
     # def test_single_int_with_operation_sign(self):
     #     with self.assertRaises(Exception) as e:
     #         lexer = Lexer('3+3+')
-    #         interpreter = Interpreter(lexer)
+    #         interpreter = Parser(lexer)
     #         result = interpreter.expr()
     #     self.assertEqual('Неверный синтаксис', e.exception.args[0])
 
@@ -59,8 +63,9 @@ class TestCalculator(TestCase):
         }
         for input_data, waited_result in data.items():
             lexer = Lexer(input_data)
-            interpreter = Interpreter(lexer)
-            result = interpreter.expr()
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            result = interpreter.interpret()
             self.assertEqual(waited_result, result)
 
     def test_different_operations(self):
@@ -71,8 +76,9 @@ class TestCalculator(TestCase):
         }
         for input_data, waited_result in data.items():
             lexer = Lexer(input_data)
-            interpreter = Interpreter(lexer)
-            result = interpreter.expr()
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            result = interpreter.interpret()
             self.assertEqual(waited_result, result)
 
     def test_with_brackets(self):
@@ -83,6 +89,7 @@ class TestCalculator(TestCase):
         }
         for input_data, waited_result in data.items():
             lexer = Lexer(input_data)
-            interpreter = Interpreter(lexer)
-            result = interpreter.expr()
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            result = interpreter.interpret()
             self.assertEqual(waited_result, result)
