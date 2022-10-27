@@ -4,7 +4,7 @@
 """
 
 from token_class import Token
-from const import PLUS, MINUS, MUL, DIV, EOF, INTEGER, LPAREN, RPAREN
+from const import PLUS, MINUS, MUL, DIV, EOF, INTEGER, LPAREN, RPAREN, RESERVED_KEYWORDS, ID, ASSIGN, SEMI, DOT
 
 
 class Lexer(object):
@@ -74,6 +74,39 @@ class Lexer(object):
             if self.current_char == ')':
                 self.advance()
                 return Token(RPAREN, ')')
+
+            if self.current_char.isalpha():
+                return self._id()
+
+            if self.current_char == ':' and self.peek() == '=':
+                self.advance()
+                self.advance()
+                return Token(ASSIGN, ':=')
+
+            if self.current_char == ';':
+                self.advance()
+                return Token(SEMI, ';')
+
+            if self.current_char == '.':
+                self.advance()
+                return Token(DOT, '.')
             # дошли досюда = ошибка
             self.error()
         return Token(EOF, None)
+
+    def peek(self):
+        """
+        Прочитать следующий символ без инкрементирования позиции чтения по тексту
+        :return:
+        """
+        peek_pos = self.pos + 1
+        return None if peek_pos > len(self.text) - 1 else self.text[peek_pos]
+
+    def _id(self):
+        result = ''
+        while self.current_char is not None and self.current_char.isalnum():
+            result += self.current_char
+            self.advance()
+
+        token = RESERVED_KEYWORDS.get(result, Token(ID, result))
+        return token

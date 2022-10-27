@@ -3,8 +3,8 @@
 """
 
 from lexer import Lexer
-from const import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN
-from abract_syntax_tree import BinOp, UnaryOp, Num
+from const import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, DOT, BEGIN, END, SEMI, ID, ASSIGN, EOF
+from abract_syntax_tree import BinOp, UnaryOp, Num, Compound, Var, NoOp, Assign
 
 
 class Parser(object):
@@ -46,6 +46,9 @@ class Parser(object):
             node = self.expr()
             self.eat(RPAREN)
             return node
+        else:
+            node = self.variable()
+            return node
 
     def term(self):
         """Нетерминальное слово term"""
@@ -71,5 +74,62 @@ class Parser(object):
             node = BinOp(left=node, op=token, right=self.term())
         return node
 
+    def program(self):
+        """program : compound_statement DOT"""
+        node = self.compound_statement()
+        self.eat(DOT)
+        return node
+
+    def compound_statement(self):
+        self.eat(BEGIN)
+        nodes = self.statement_list()
+        self.eat(END)
+
+        root = Compound()
+        for node in nodes:
+            root.children.append(node)
+
+        return root
+
+    def statement_list(self):
+        node = self.statement()
+        results = [node]
+        while self.current_token.type == SEMI:
+            self.eat(SEMI)
+            results.append(self.statement())
+
+        if self.current_token.type == ID:
+            self.error()
+
+        return results
+
+    def statement(self):
+        if self.current_token.type == BEGIN:
+            node = self.compound_statement()
+        elif self.current_token.type == ID:
+            node = self.assigment_statement()
+        else:
+            node = self.empty()
+        return node
+
+    def assigment_statement(self):
+        left = self.variable()
+        token = self.current_token
+        self.eat(ASSIGN)
+        right = self.expr()
+        node = Assign(left, token, right)
+        return node
+
+    def variable(self):
+        node = Var(self.current_token)
+        self.eat(ID)
+        return node
+
+    def empty(self):
+        return NoOp()
+
     def parse(self):
-        return self.expr()
+        node = self.program()
+        if self.current_token.type != EOF:
+            self.error()
+        return node
