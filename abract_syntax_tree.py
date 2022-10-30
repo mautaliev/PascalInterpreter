@@ -28,7 +28,12 @@ class Num(AST):
         self.value = token.value
 
 
-class Compound(AST):
+class StatementList(AST):
+    def __init__(self):
+        self.children = []
+
+
+class DeclarationList(AST):
     def __init__(self):
         self.children = []
 
@@ -46,7 +51,25 @@ class Var(AST):
         self.value = token.value
 
 
+class Type(AST):
+    def __init__(self, token):
+        self.token = token
+        self.type_value = token.value
+
+
+class Declaration(AST):
+    def __init__(self, variable, var_type):
+        self.variable = variable
+        self.type = var_type
+
+
 class NoOp(AST):
     """Пустое содержание"""
     def __init__(self):
         pass
+
+
+class Program(AST):
+    def __init__(self, declaration_list, statement_list):
+        self.declaration_list = declaration_list
+        self.statement_list = statement_list

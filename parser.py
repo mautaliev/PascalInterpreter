@@ -3,8 +3,10 @@
 """
 
 from lexer import Lexer
-from const import INTEGER, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, DOT, BEGIN, END, SEMI, ID, ASSIGN, EOF
-from abract_syntax_tree import BinOp, UnaryOp, Num, Compound, Var, NoOp, Assign
+from const import INT, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, DOT, BEGIN, END, SEMI, ID, ASSIGN, EOF, VAR,\
+    COLON, INTEGER, CHAR, BOOLEAN
+from abract_syntax_tree import BinOp, UnaryOp, Num, StatementList, DeclarationList, Var, NoOp, Assign, Program, Type,\
+    Declaration
 
 
 class Parser(object):
@@ -38,8 +40,8 @@ class Parser(object):
             self.eat(MINUS)
             node = UnaryOp(token, self.factor())
             return node
-        elif token.type == INTEGER:
-            self.eat(INTEGER)
+        elif token.type == INT:
+            self.eat(INT)
             return Num(token)
         elif token.type == LPAREN:
             self.eat(LPAREN)
@@ -75,38 +77,65 @@ class Parser(object):
         return node
 
     def program(self):
-        """program : compound_statement DOT"""
-        node = self.compound_statement()
-        self.eat(DOT)
-        return node
-
-    def compound_statement(self):
+        """
+        program : VAR declaration_list BEGIN statement_list END.
+        :return:
+        """
+        self.eat(VAR)
+        var_node = self.declaration_list()
         self.eat(BEGIN)
-        nodes = self.statement_list()
+        statement_list_node = self.statement_list()
         self.eat(END)
+        self.eat(DOT)
+        return Program(var_node, statement_list_node)
 
-        root = Compound()
-        for node in nodes:
-            root.children.append(node)
-
-        return root
-
-    def statement_list(self):
-        node = self.statement()
-        results = [node]
+    def declaration_list(self):
+        """
+        declaration_list : declaration | declaration_list; declaration
+        :return:
+        """
+        node = self.declaration()
+        result = [node]
         while self.current_token.type == SEMI:
             self.eat(SEMI)
-            results.append(self.statement())
+            result.append(self.declaration())
 
         if self.current_token.type == ID:
             self.error()
 
-        return results
+        root = DeclarationList()
+        for item in result:
+            root.children.append(item)
+        return root
+
+    def declaration(self):
+        """
+        declaration : variable : type
+        :return:
+        """
+        left = self.variable()
+        self.eat(COLON)
+        right = self.type()
+        return Declaration(left, right)
+
+    def statement_list(self):
+        node = self.statement()
+        result = [node]
+        while self.current_token.type == SEMI:
+            self.eat(SEMI)
+            result.append(self.statement())
+
+        if self.current_token.type == ID:
+            self.error()
+
+        root = StatementList()
+        for item in result:
+            root.children.append(item)
+
+        return root
 
     def statement(self):
-        if self.current_token.type == BEGIN:
-            node = self.compound_statement()
-        elif self.current_token.type == ID:
+        if self.current_token.type == ID:
             node = self.assigment_statement()
         else:
             node = self.empty()
@@ -124,6 +153,13 @@ class Parser(object):
         node = Var(self.current_token)
         self.eat(ID)
         return node
+
+    def type(self):
+        token = self.current_token
+        if token.type not in (INTEGER, CHAR, BOOLEAN):
+            self.error()
+        self.eat(token.type)
+        return Type(token)
 
     def empty(self):
         return NoOp()

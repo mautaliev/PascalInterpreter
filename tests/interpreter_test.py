@@ -5,20 +5,30 @@ from interpreter import Interpreter
 
 
 class TestInterpreter(TestCase):
-    def test_variables(self):
+    def test_types(self):
         text = """
+        VAR
+            a : INTEGER
         BEGIN
-            BEGIN
-                number := 2;
-                a := number;
-                b := 10 * a + 10 * number / 4;
-                c := a - - b
-            END;
-            x := 11;
+            a := 2+3
         END.
         """
         lexer = Lexer(text)
         parser = Parser(lexer)
         interpreter = Interpreter(parser)
         interpreter.interpret()
-        self.assertEqual(interpreter.GLOBAL_SCOPE, {'a': 2, 'x': 11, 'c': 27, 'b': 25, 'number': 2})
+        self.assertEqual(interpreter.DECLARE_SCOPE, {'a': int})
+
+    def test_variables(self):
+        text = """
+        VAR
+            a : INTEGER
+        BEGIN
+            a := 2+3
+        END.
+        """
+        lexer = Lexer(text)
+        parser = Parser(lexer)
+        interpreter = Interpreter(parser)
+        interpreter.interpret()
+        self.assertEqual(interpreter.GLOBAL_SCOPE, {'a': 5})

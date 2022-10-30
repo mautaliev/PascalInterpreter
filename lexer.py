@@ -4,7 +4,7 @@
 """
 
 from token_class import Token
-from const import PLUS, MINUS, MUL, DIV, EOF, INTEGER, LPAREN, RPAREN, RESERVED_KEYWORDS, ID, ASSIGN, SEMI, DOT
+from const import PLUS, MINUS, MUL, DIV, EOF, INT, LPAREN, RPAREN, RESERVED_KEYWORDS, ID, ASSIGN, SEMI, DOT, COLON
 
 
 class Lexer(object):
@@ -49,7 +49,7 @@ class Lexer(object):
                 continue
 
             if self.current_char.isdigit():
-                return Token(INTEGER, self.integer())
+                return Token(INT, self.integer())
 
             if self.current_char == '+':
                 self.advance()
@@ -90,6 +90,10 @@ class Lexer(object):
             if self.current_char == '.':
                 self.advance()
                 return Token(DOT, '.')
+
+            if self.current_char == ':':
+                self.advance()
+                return Token(COLON, ':')
             # дошли досюда = ошибка
             self.error()
         return Token(EOF, None)
@@ -103,6 +107,10 @@ class Lexer(object):
         return None if peek_pos > len(self.text) - 1 else self.text[peek_pos]
 
     def _id(self):
+        """
+        Понять, что читаем: зарезервированное слово или идентификатор
+        :return:
+        """
         result = ''
         while self.current_char is not None and self.current_char.isalnum():
             result += self.current_char
