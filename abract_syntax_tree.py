@@ -76,5 +76,23 @@ class Program(AST):
 
 
 class WriteLn(AST):
-    def __init__(self, var):
-        self.variable = var
+    def __init__(self, variable):
+        self.variable = variable
+
+
+class ChoiceList(AST):
+    def __init__(self):
+        self.children = []
+
+
+class Choice(AST):
+    # TODO: Num заменить на Constant - либо Num, либо Chr
+    def __init__(self, factor: Num, assignment: Assign):
+        self.factor = factor
+        self.assignment = assignment
+
+
+class Case(AST):
+    def __init__(self, variable: Var, choose_list: ChoiceList):
+        self.variable = variable
+        self.choose_list = choose_list

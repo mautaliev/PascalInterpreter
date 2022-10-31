@@ -47,3 +47,21 @@ class TestInterpreter(TestCase):
         interpreter = Interpreter(parser)
         interpreter.interpret()
         self.assertEqual(interpreter.print_str, '5\n')
+
+    def test_management_statement_case(self):
+        text = """
+        VAR
+            a : INTEGER
+        BEGIN
+            a := 2+3;
+            CASE a OF
+                5: a := a+1;
+                10: a := a+2
+            END
+        END.
+        """
+        lexer = Lexer(text)
+        parser = Parser(lexer)
+        interpreter = Interpreter(parser)
+        interpreter.interpret()
+        self.assertEqual(interpreter.global_scope, {'a': 6})

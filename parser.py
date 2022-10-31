@@ -4,9 +4,9 @@
 
 from lexer import Lexer
 from const import INT, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, DOT, BEGIN, END, SEMI, ID, ASSIGN, EOF, VAR,\
-    COLON, INTEGER, CHAR, BOOLEAN, WRITELN
+    COLON, INTEGER, CHAR, BOOLEAN, WRITELN, CASE, OF
 from abract_syntax_tree import BinOp, UnaryOp, Num, StatementList, DeclarationList, Var, NoOp, Assign, Program, Type,\
-    Declaration, WriteLn
+    Declaration, WriteLn, Case, ChoiceList, Choice
 
 
 class Parser(object):
@@ -140,14 +140,16 @@ class Parser(object):
 
     def statement(self):
         if self.current_token.type == ID:
-            node = self.assigment_statement()
+            node = self.assignment_statement()
         elif self.current_token.type == WRITELN:
             node = self.writeln()
+        elif self.current_token.type in (CASE,):
+            node = self.management_statement()
         else:
             node = self.empty()
         return node
 
-    def assigment_statement(self):
+    def assignment_statement(self):
         left = self.variable()
         token = self.current_token
         self.eat(ASSIGN)
@@ -161,6 +163,57 @@ class Parser(object):
         node = self.variable()
         self.eat(RPAREN)
         return WriteLn(node)
+
+    def management_statement(self):
+        """
+        management_statement : case
+        :return:
+        """
+        # используем маппинг, т.к. в теории правило управляющей конструкции
+        # может быть расширено: добавлены for, if и т.д...
+        mapping = {CASE: self.case}
+        return mapping.get(self.current_token.type)()
+
+    def case(self):
+        """
+        case : CASE variable OF choice_list END
+        :return:
+        """
+        self.eat(CASE)
+        case_variable = self.variable()
+        self.eat(OF)
+        choose_list = self.choice_list()
+        self.eat(END)
+        return Case(case_variable, choose_list)
+
+    def choice_list(self):
+        """
+        choice_list : choice | choice_list; choice
+        :return:
+        """
+        node = self.choice()
+        result = [node]
+        while self.current_token.type == SEMI:
+            self.eat(SEMI)
+            result.append(self.choice())
+
+        if self.current_token.type == ID:
+            self.error()
+
+        root = ChoiceList()
+        for item in result:
+            root.children.append(item)
+        return root
+
+    def choice(self):
+        """
+        choice : <factor>: <assignment_statement>
+        :return:
+        """
+        factor = self.factor()
+        self.eat(COLON)
+        assignment = self.assignment_statement()
+        return Choice(factor, assignment)
 
     def variable(self):
         node = Var(self.current_token)

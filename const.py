@@ -20,6 +20,8 @@ INTEGER = 'INTEGER_TYPE'
 CHAR = 'CHAR_TYPE'
 BOOLEAN = 'BOOLEAN_TYPE'
 WRITELN = 'WRITELN'
+CASE = 'CASE'
+OF = 'OF'
 
 # токен конца входной строки
 EOF = 'EOF'
@@ -34,5 +36,7 @@ RESERVED_KEYWORDS = {
     'INTEGER': Token('INTEGER_TYPE', 'INTEGER'),
     'CHAR': Token('CHAR_TYPE', 'CHAR'),
     'BOOLEAN': Token('BOOLEAN_TYPE', 'BOOLEAN'),
-    'WRITELN': Token('WRITELN', 'WRITELN')
+    'WRITELN': Token('WRITELN', 'WRITELN'),
+    'CASE': Token('CASE', 'CASE'),
+    'OF': Token('OF', 'OF')
 }

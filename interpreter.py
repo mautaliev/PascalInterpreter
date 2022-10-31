@@ -3,7 +3,8 @@
 """
 
 from const import PLUS, MINUS, MUL, DIV
-from abract_syntax_tree import BinOp, UnaryOp, Num, Program, DeclarationList, StatementList, Declaration, Type, WriteLn
+from abract_syntax_tree import BinOp, UnaryOp, Num, Program, DeclarationList, StatementList, Declaration, Type, \
+    WriteLn, Choice, ChoiceList, Case
 
 
 class NodeVisitor(object):
@@ -93,6 +94,20 @@ class Interpreter(NodeVisitor):
     def visit_WriteLn(self, node: WriteLn):
         var_value = self.visit(node.variable)
         self.print_str = f'{self.print_str}{var_value}\n'
+
+    def visit_Case(self, node: Case):
+        variable = self.visit(node.variable)
+        mapping = self.visit(node.choose_list)
+        return self.visit(mapping.get(variable))
+
+    def visit_ChoiceList(self, node: ChoiceList):
+        case_dict = {}
+        for item in node.children:
+            case_dict.update(self.visit(item))
+        return case_dict
+
+    def visit_Choice(self, node: Choice):
+        return {self.visit(node.factor): node.assignment}
 
     def interpret(self):
         tree = self.parser.parse()
