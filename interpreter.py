@@ -3,13 +3,14 @@
 """
 
 from const import PLUS, MINUS, MUL, DIV
-from abract_syntax_tree import BinOp, UnaryOp, Num, Program, DeclarationList, StatementList, Declaration, Type
+from abract_syntax_tree import BinOp, UnaryOp, Num, Program, DeclarationList, StatementList, Declaration, Type, WriteLn
 
 
 class NodeVisitor(object):
     def __init__(self):
-        self.DECLARE_SCOPE = {}
-        self.GLOBAL_SCOPE = {}
+        self.declare_scope = {}
+        self.global_scope = {}
+        self.print_str = ''
 
     def visit(self, node):
         method_name = 'visit_' + type(node).__name__
@@ -54,17 +55,17 @@ class Interpreter(NodeVisitor):
     def visit_Assign(self, node):
         var_name = node.left.value
         var_value = self.visit(node.right)
-        var_type = self.DECLARE_SCOPE.get(var_name)
+        var_type = self.declare_scope.get(var_name)
         if not var_type:
             raise Exception(f'Попытка присвоить значения необъявленной переменной {var_name}')
         if not isinstance(var_value, var_type):
             raise Exception(f'Несоответствие типа: переменная {var_name} имеет тип {var_type}, '
                             f'пытались присвоить {type(var_value)}')
-        self.GLOBAL_SCOPE[var_name] = var_value
+        self.global_scope[var_name] = var_value
 
     def visit_Var(self, node):
         var_name = node.value
-        val = self.GLOBAL_SCOPE.get(var_name)
+        val = self.global_scope.get(var_name)
         if val:
             return val
         raise NameError(repr(var_name))
@@ -79,7 +80,7 @@ class Interpreter(NodeVisitor):
 
     def visit_Declaration(self, node: Declaration):
         var_name = node.variable.value
-        self.DECLARE_SCOPE[var_name] = self.visit(node.type)
+        self.declare_scope[var_name] = self.visit(node.type)
 
     def visit_Type(self, node: Type):
         mapping = {
@@ -88,6 +89,10 @@ class Interpreter(NodeVisitor):
             'BOOLEAN': bool
         }
         return mapping.get(node.type_value)
+
+    def visit_WriteLn(self, node: WriteLn):
+        var_value = self.visit(node.variable)
+        self.print_str = f'{self.print_str}{var_value}\n'
 
     def interpret(self):
         tree = self.parser.parse()

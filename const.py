@@ -19,6 +19,7 @@ VAR = 'VAR'
 INTEGER = 'INTEGER_TYPE'
 CHAR = 'CHAR_TYPE'
 BOOLEAN = 'BOOLEAN_TYPE'
+WRITELN = 'WRITELN'
 
 # токен конца входной строки
 EOF = 'EOF'
@@ -32,5 +33,6 @@ RESERVED_KEYWORDS = {
     'DIV': Token('DIV', 'DIV'),
     'INTEGER': Token('INTEGER_TYPE', 'INTEGER'),
     'CHAR': Token('CHAR_TYPE', 'CHAR'),
-    'BOOLEAN': Token('BOOLEAN_TYPE', 'BOOLEAN')
+    'BOOLEAN': Token('BOOLEAN_TYPE', 'BOOLEAN'),
+    'WRITELN': Token('WRITELN', 'WRITELN')
 }

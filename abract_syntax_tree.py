@@ -73,3 +73,8 @@ class Program(AST):
     def __init__(self, declaration_list, statement_list):
         self.declaration_list = declaration_list
         self.statement_list = statement_list
+
+
+class WriteLn(AST):
+    def __init__(self, var):
+        self.variable = var

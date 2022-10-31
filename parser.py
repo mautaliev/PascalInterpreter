@@ -4,9 +4,9 @@
 
 from lexer import Lexer
 from const import INT, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, DOT, BEGIN, END, SEMI, ID, ASSIGN, EOF, VAR,\
-    COLON, INTEGER, CHAR, BOOLEAN
+    COLON, INTEGER, CHAR, BOOLEAN, WRITELN
 from abract_syntax_tree import BinOp, UnaryOp, Num, StatementList, DeclarationList, Var, NoOp, Assign, Program, Type,\
-    Declaration
+    Declaration, WriteLn
 
 
 class Parser(object):
@@ -119,6 +119,10 @@ class Parser(object):
         return Declaration(left, right)
 
     def statement_list(self):
+        """
+        statement_list : statement | statement_list; statement;
+        :return:
+        """
         node = self.statement()
         result = [node]
         while self.current_token.type == SEMI:
@@ -137,6 +141,8 @@ class Parser(object):
     def statement(self):
         if self.current_token.type == ID:
             node = self.assigment_statement()
+        elif self.current_token.type == WRITELN:
+            node = self.writeln()
         else:
             node = self.empty()
         return node
@@ -148,6 +154,13 @@ class Parser(object):
         right = self.expr()
         node = Assign(left, token, right)
         return node
+
+    def writeln(self):
+        self.eat(WRITELN)
+        self.eat(LPAREN)
+        node = self.variable()
+        self.eat(RPAREN)
+        return WriteLn(node)
 
     def variable(self):
         node = Var(self.current_token)
