@@ -4,7 +4,9 @@
 """
 
 from token_class import Token
-from const import PLUS, MINUS, MUL, DIV, EOF, INT, LPAREN, RPAREN, RESERVED_KEYWORDS, ID, ASSIGN, SEMI, DOT, COLON
+from const import PLUS, MINUS, MUL, DIV, EOF, INT, LPAREN, RPAREN, RESERVED_KEYWORDS, ID, ASSIGN, SEMI, DOT, COLON, \
+    POSSIBLE_DIGITS
+from bin_digits import BinaryDigit
 
 
 class Lexer(object):
@@ -32,10 +34,10 @@ class Lexer(object):
         Получить число. Позволяет получать многозначные числа путём чтения, пока символы не перестанут быть цифрами
         """
         result = ''
-        while self.current_char is not None and self.current_char.isdigit():
+        while self.current_char is not None and self.current_char in POSSIBLE_DIGITS:
             result += self.current_char
             self.advance()
-        return int(result)
+        return BinaryDigit(result)
 
     def get_next_token(self):
         """
@@ -48,7 +50,7 @@ class Lexer(object):
                 self.skip_whitespace()
                 continue
 
-            if self.current_char.isdigit():
+            if self.current_char in POSSIBLE_DIGITS:
                 return Token(INT, self.integer())
 
             if self.current_char == '+':

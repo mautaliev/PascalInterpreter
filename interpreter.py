@@ -5,6 +5,7 @@
 from const import PLUS, MINUS, MUL, DIV
 from abract_syntax_tree import BinOp, UnaryOp, Num, Program, DeclarationList, StatementList, Declaration, Type, \
     WriteLn, Choice, ChoiceList, Case
+from bin_digits import BinaryDigit
 
 
 class NodeVisitor(object):
@@ -32,7 +33,7 @@ class Interpreter(NodeVisitor):
             PLUS: lambda x, y: x+y,
             MINUS: lambda x, y: x-y,
             MUL: lambda x, y: x*y,
-            DIV: lambda x, y: int(x/y)
+            DIV: lambda x, y: x/y
         }
         return mapping.get(node.op.type)(self.visit(node.left), self.visit(node.right))
 
@@ -85,7 +86,7 @@ class Interpreter(NodeVisitor):
 
     def visit_Type(self, node: Type):
         mapping = {
-            'INTEGER': int,
+            'INTEGER': BinaryDigit,
             'CHAR': str,
             'BOOLEAN': bool
         }

@@ -40,3 +40,6 @@ RESERVED_KEYWORDS = {
     'CASE': Token('CASE', 'CASE'),
     'OF': Token('OF', 'OF')
 }
+
+# цифры
+POSSIBLE_DIGITS = ('0', '1')
