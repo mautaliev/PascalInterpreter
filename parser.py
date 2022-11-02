@@ -4,7 +4,7 @@
 
 from lexer import Lexer
 from const import INT, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, DOT, BEGIN, END, SEMI, ID, ASSIGN, EOF, VAR,\
-    COLON, INTEGER, CHAR, BOOLEAN, WRITELN, CASE, OF
+    COLON, INTEGER, CHAR, WRITELN, CASE, OF
 from abract_syntax_tree import BinOp, UnaryOp, Num, StatementList, DeclarationList, Var, NoOp, Assign, Program, Type,\
     Declaration, WriteLn, Case, ChoiceList, Choice
 
@@ -139,6 +139,10 @@ class Parser(object):
         return root
 
     def statement(self):
+        """
+        statement : assignment_statement | writeln | management_statement
+        :return:
+        """
         if self.current_token.type == ID:
             node = self.assignment_statement()
         elif self.current_token.type == WRITELN:
@@ -150,6 +154,10 @@ class Parser(object):
         return node
 
     def assignment_statement(self):
+        """
+        assignment_statement : variable := expr
+        :return:
+        """
         left = self.variable()
         token = self.current_token
         self.eat(ASSIGN)
@@ -158,6 +166,10 @@ class Parser(object):
         return node
 
     def writeln(self):
+        """
+        writeln : WRITELN(variable)
+        :return:
+        """
         self.eat(WRITELN)
         self.eat(LPAREN)
         node = self.variable()
@@ -216,13 +228,21 @@ class Parser(object):
         return Choice(factor, assignment)
 
     def variable(self):
+        """
+        variable : любая последовательность букв англоязычного алфавита
+        :return:
+        """
         node = Var(self.current_token)
         self.eat(ID)
         return node
 
     def type(self):
+        """
+        type : INTEGER | CHAR
+        :return:
+        """
         token = self.current_token
-        if token.type not in (INTEGER, CHAR, BOOLEAN):
+        if token.type not in (INTEGER, CHAR):
             self.error()
         self.eat(token.type)
         return Type(token)
