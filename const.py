@@ -22,6 +22,11 @@ BOOLEAN = 'BOOLEAN_TYPE'
 WRITELN = 'WRITELN'
 CASE = 'CASE'
 OF = 'OF'
+TEXT_CONSTANT = 'TEXT_CONSTANT'
+OR = 'OR'
+AND = 'AND'
+SHL = 'SHL'
+SHR = 'SHR'
 
 # токен конца входной строки
 EOF = 'EOF'
@@ -38,7 +43,11 @@ RESERVED_KEYWORDS = {
     'BOOLEAN': Token('BOOLEAN_TYPE', 'BOOLEAN'),
     'WRITELN': Token('WRITELN', 'WRITELN'),
     'CASE': Token('CASE', 'CASE'),
-    'OF': Token('OF', 'OF')
+    'OF': Token('OF', 'OF'),
+    'OR': Token('OR', 'OR'),
+    'AND': Token('AND', 'AND'),
+    'SHL': Token('SHL', 'SHL'),
+    'SHR': Token('SHR', 'SHR')
 }
 
 # цифры

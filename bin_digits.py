@@ -32,6 +32,9 @@ class BinaryDigit:
     def __str__(self):
         return f'{"-" if self.negative else ""}{self.data}'
 
+    def __repr__(self):
+        return f'{"negative" if self.negative else ""} {self.data}: {self.dec}'
+
     @is_binary_digit
     def __add__(self, other):
         return BinaryDigit.from_decimal(self.dec + other.dec)
@@ -55,6 +58,32 @@ class BinaryDigit:
     @is_binary_digit
     def __rshift__(self, other):
         return BinaryDigit.from_decimal(int(self.dec >> other.dec))
+
+    @is_binary_digit
+    def __bool__(self):
+        return bool(self.dec)
+
+    @is_binary_digit
+    def binary_or(self, other):
+        negative_flag = self.negative or other.negative
+        first_len, second_len = len(self.data), len(other.data)
+        first_diff, second_diff = second_len - first_len, first_len - second_len
+        first_bin, second_bin = f'{"0"*first_diff}{self.data}', f'{"0"*second_diff}{other.data}'
+        result_bin = ''
+        for index in range(max([first_len, second_len])):
+            result_bin += '1' if int(first_bin[index]) or int(second_bin[index]) else '0'
+        return BinaryDigit(result_bin, negative_flag)
+
+    @is_binary_digit
+    def binary_and(self, other):
+        negative_flag = self.negative and other.negative
+        first_len, second_len = len(self.data), len(other.data)
+        first_diff, second_diff = second_len - first_len, first_len - second_len
+        first_bin, second_bin = f'{"0"*first_diff}{self.data}', f'{"0"*second_diff}{other.data}'
+        result_bin = ''
+        for index in range(max([first_len, second_len])):
+            result_bin += '1' if int(first_bin[index]) and int(second_bin[index]) else '0'
+        return BinaryDigit(result_bin, negative_flag)
 
     def __pos__(self):
         return BinaryDigit.from_decimal(+self.dec)

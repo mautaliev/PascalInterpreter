@@ -96,3 +96,9 @@ class Case(AST):
     def __init__(self, variable: Var, choose_list: ChoiceList):
         self.variable = variable
         self.choose_list = choose_list
+
+
+class TextConstant(AST):
+    def __init__(self, token: Token):
+        self.token = token
+        self.value = token.value

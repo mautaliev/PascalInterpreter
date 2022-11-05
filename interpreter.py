@@ -2,9 +2,9 @@
 Класс интерпретатора - обходим узлы
 """
 
-from const import PLUS, MINUS, MUL, DIV
+from const import PLUS, MINUS, MUL, DIV, OR, AND, SHR, SHL
 from abract_syntax_tree import BinOp, UnaryOp, Num, Program, DeclarationList, StatementList, Declaration, Type, \
-    WriteLn, Choice, ChoiceList, Case
+    WriteLn, Choice, ChoiceList, Case, TextConstant
 from bin_digits import BinaryDigit
 
 
@@ -33,7 +33,11 @@ class Interpreter(NodeVisitor):
             PLUS: lambda x, y: x+y,
             MINUS: lambda x, y: x-y,
             MUL: lambda x, y: x*y,
-            DIV: lambda x, y: x/y
+            DIV: lambda x, y: x/y,
+            OR: lambda x, y: x.binary_or(y),
+            AND: lambda x, y: x.binary_and(y),
+            SHL: lambda x, y: x << y,
+            SHR: lambda x, y: x >> y
         }
         return mapping.get(node.op.type)(self.visit(node.left), self.visit(node.right))
 
@@ -109,6 +113,9 @@ class Interpreter(NodeVisitor):
 
     def visit_Choice(self, node: Choice):
         return {self.visit(node.factor): node.assignment}
+
+    def visit_TextConstant(self, node: TextConstant):
+        return node.value
 
     def interpret(self):
         tree = self.parser.parse()

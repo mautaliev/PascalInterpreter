@@ -4,9 +4,9 @@
 
 from lexer import Lexer
 from const import INT, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, DOT, BEGIN, END, SEMI, ID, ASSIGN, EOF, VAR,\
-    COLON, INTEGER, CHAR, WRITELN, CASE, OF
+    COLON, INTEGER, CHAR, WRITELN, CASE, OF, TEXT_CONSTANT, OR, AND, SHR, SHL
 from abract_syntax_tree import BinOp, UnaryOp, Num, StatementList, DeclarationList, Var, NoOp, Assign, Program, Type,\
-    Declaration, WriteLn, Case, ChoiceList, Choice
+    Declaration, WriteLn, Case, ChoiceList, Choice, TextConstant
 
 
 class Parser(object):
@@ -48,6 +48,9 @@ class Parser(object):
             node = self.expr()
             self.eat(RPAREN)
             return node
+        elif token.type == TEXT_CONSTANT:
+            self.eat(TEXT_CONSTANT)
+            return TextConstant(token)
         else:
             node = self.variable()
             return node
@@ -55,24 +58,18 @@ class Parser(object):
     def term(self):
         """Нетерминальное слово term"""
         node = self.factor()
-        while self.current_token.type in (MUL, DIV):
+        while self.current_token.type in (MUL, DIV, AND, SHR, SHL):
             token = self.current_token
-            if token.type == MUL:
-                self.eat(MUL)
-            elif token.type == DIV:
-                self.eat(DIV)
+            self.eat(token.type)
             node = BinOp(left=node, op=token, right=self.factor())
         return node
 
     def expr(self):
         """Нетерминальное слово expr"""
         node = self.term()
-        while self.current_token.type in (PLUS, MINUS):
+        while self.current_token.type in (PLUS, MINUS, OR):
             token = self.current_token
-            if token.type == PLUS:
-                self.eat(PLUS)
-            elif token.type == MINUS:
-                self.eat(MINUS)
+            self.eat(token.type)
             node = BinOp(left=node, op=token, right=self.term())
         return node
 

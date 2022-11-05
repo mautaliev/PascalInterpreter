@@ -5,7 +5,7 @@
 
 from token_class import Token
 from const import PLUS, MINUS, MUL, DIV, EOF, INT, LPAREN, RPAREN, RESERVED_KEYWORDS, ID, ASSIGN, SEMI, DOT, COLON, \
-    POSSIBLE_DIGITS
+    POSSIBLE_DIGITS, TEXT_CONSTANT
 from bin_digits import BinaryDigit
 
 
@@ -96,6 +96,10 @@ class Lexer(object):
             if self.current_char == ':':
                 self.advance()
                 return Token(COLON, ':')
+
+            if self.current_char == "'":
+                self.advance()
+                return self.text_constant()
             # дошли досюда = ошибка
             self.error()
         return Token(EOF, None)
@@ -120,3 +124,15 @@ class Lexer(object):
 
         token = RESERVED_KEYWORDS.get(result, Token(ID, result))
         return token
+
+    def text_constant(self):
+        """
+        Понять, что читаем текстовую константу
+        :return:
+        """
+        result = ''
+        while self.current_char not in (None, "'"):
+            result += self.current_char
+            self.advance()
+        self.advance()
+        return Token(TEXT_CONSTANT, result)
