@@ -4,7 +4,7 @@ from lexer import Lexer
 from interpreter import Interpreter
 from bin_digits import BinaryDigit
 from testing_const import TEST_TYPES_TEXT, TEST_VARIABLES_TEXT, TEST_PRINT_TEXT, TEST_MANAGEMENT_STATEMENT_TEXT, \
-    TEST_OPERATIONS_DATA
+    TEST_OPERATIONS_DATA, TEST_OPTIMIZE_DATA
 
 # TODO:
 #  1. Сделать вывод ошибок с указанием на строку
@@ -51,3 +51,11 @@ class TestInterpreter(TestCase):
             interpreter = Interpreter(parser)
             interpreter.interpret()
             self.assertEqual(interpreter.global_scope, result)
+
+    def test_optimize(self):
+        for text, result in TEST_OPTIMIZE_DATA.items():
+            lexer = Lexer(text)
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            interpreter.interpret()
+            self.assertEqual(interpreter.get_optimized_code(), result)

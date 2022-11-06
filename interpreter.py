@@ -2,6 +2,8 @@
 Класс интерпретатора - обходим узлы
 """
 
+import re
+
 from const import PLUS, MINUS, MUL, DIV, OR, AND, SHR, SHL
 from abract_syntax_tree import BinOp, UnaryOp, Num, Program, DeclarationList, StatementList, Declaration, Type, \
     WriteLn, Choice, ChoiceList, Case, TextConstant
@@ -120,3 +122,16 @@ class Interpreter(NodeVisitor):
     def interpret(self):
         tree = self.parser.parse()
         return self.visit(tree)
+
+    def get_optimized_code(self) -> str:
+        if not self.declare_scope:
+            raise Exception('Не найдено объявление ни одной переменной')
+        input_text = self.parser.lexer.text
+        constant_assignments = self.find_constant_assignment_statements(input_text)
+        for assignment in constant_assignments:
+            input_text = input_text.replace(assignment[1].strip(), str(self.global_scope.get(assignment[0].strip())), 1)
+        return input_text
+
+    @staticmethod
+    def find_constant_assignment_statements(text: str):
+        return re.findall(r'([a-z ]+):=([0-9+/* -]+)', text)

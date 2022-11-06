@@ -95,3 +95,24 @@ TEST_OPERATIONS_DATA = {
         END.
     """: {'a': BinaryDigit.from_decimal(1)}
 }
+TEST_OPTIMIZE_DATA = {
+    """
+        VAR
+            abc : INTEGER;
+            john: INTEGER
+        BEGIN
+            abc := 10+11;
+            john := 11101101 + 1111110
+        END.
+    """
+    :
+    """
+        VAR
+            abc : INTEGER;
+            john: INTEGER
+        BEGIN
+            abc := 101;
+            john := 101101011
+        END.
+    """
+}
