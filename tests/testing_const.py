@@ -99,20 +99,63 @@ TEST_OPTIMIZE_DATA = {
     """
         VAR
             abc : INTEGER;
-            john: INTEGER
+            john: INTEGER;
+            value: INTEGER
         BEGIN
             abc := 10+11;
-            john := 11101101 + 1111110
+            john := 11101101 + 1111110;
+            value := 10
         END.
     """
     :
     """
         VAR
             abc : INTEGER;
-            john: INTEGER
+            john: INTEGER;
+            value: INTEGER
         BEGIN
             abc := 101;
-            john := 101101011
+            john := 101101011;
+            value := 10
+        END.
+    """,
+    """
+        VAR
+            a : INTEGER
+        BEGIN
+            a := 10+11;
+            CASE a OF
+                101: a := 1+1;
+                1010: a := a+10
+            END
+        END.
+    """:
+    """
+        VAR
+            a : INTEGER
+        BEGIN
+            a := 101;
+            CASE a OF
+                101: a := 10;
+                1010: a := a+10
+            END
         END.
     """
+}
+TEST_ERRORS_DATA = {
+    """VAR
+            a : INTEGER;
+            b : CHAR
+        BEGN
+            a := 10+11;
+        END.
+    """: 'Ошибка в строке 4: неверный синтаксис',
+    """
+        VAR
+            a : INTEGER;
+            b : CHAR
+        BEGIN
+            a := 10+13;
+        END.
+    """: 'Ошибка в строке 6: неверный символ'
 }

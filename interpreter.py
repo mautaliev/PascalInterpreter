@@ -4,6 +4,8 @@
 
 import re
 
+from lexer import Lexer
+from parser import Parser
 from const import PLUS, MINUS, MUL, DIV, OR, AND, SHR, SHL
 from abract_syntax_tree import BinOp, UnaryOp, Num, Program, DeclarationList, StatementList, Declaration, Type, \
     WriteLn, Choice, ChoiceList, Case, TextConstant
@@ -129,9 +131,29 @@ class Interpreter(NodeVisitor):
         input_text = self.parser.lexer.text
         constant_assignments = self.find_constant_assignment_statements(input_text)
         for assignment in constant_assignments:
-            input_text = input_text.replace(assignment[1].strip(), str(self.global_scope.get(assignment[0].strip())), 1)
+            if assignment[1].strip():
+                input_text = input_text.replace(assignment[1].strip(),
+                                                str(self.calc_optimized_value(assignment[1].strip())),
+                                                1)
         return input_text
 
     @staticmethod
+    def calc_optimized_value(expression):
+        lexer = Lexer(expression)
+        parser = Parser(lexer)
+        calculator = Calculator(parser)
+        value = calculator.calculate()
+        return value
+
+    @staticmethod
     def find_constant_assignment_statements(text: str):
-        return re.findall(r'([a-z ]+):=([0-9+/* -]+)', text)
+        return re.findall(r'([a-z ]+):=([ 01+/*-]+)', text)
+
+
+class Calculator(Interpreter):
+    def __init__(self, parser):
+        super().__init__(parser)
+
+    def calculate(self):
+        tree = self.parser.calculate()
+        return self.visit(tree)

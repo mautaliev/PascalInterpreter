@@ -17,7 +17,7 @@ class Lexer(object):
 
     def error(self):
         """Вызвать исключение"""
-        raise Exception('Неверный символ')
+        raise Exception(f'Ошибка в строке {self.current_line}: неверный символ')
 
     def advance(self):
         """Передвинуть текущую позицию и установить текущий символ"""
@@ -136,3 +136,20 @@ class Lexer(object):
             self.advance()
         self.advance()
         return Token(TEXT_CONSTANT, result)
+
+    @property
+    def current_line(self):
+        data = self.text.split('\n')
+
+        next_endline = self.text[self.pos:].find('\n')
+        next_endline = self.pos + next_endline if next_endline != -1 else len(self.text)
+
+        last_endline = self.text[:self.pos][::-1].find('\n')
+        last_endline = self.pos - last_endline if last_endline != -1 else 0
+
+        current_line = self.text[last_endline:next_endline if next_endline else next_endline]
+        try:
+            current_line_num = data.index(current_line) + 1
+        except:
+            current_line_num = -1
+        return current_line_num if current_line_num != -1 else 'undefined'

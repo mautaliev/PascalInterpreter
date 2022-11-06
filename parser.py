@@ -16,7 +16,7 @@ class Parser(object):
 
     def error(self):
         """Вызвать исключение"""
-        raise Exception('Неверный синтаксис')
+        raise Exception(f'Ошибка в строке {self.lexer.current_line}: неверный синтаксис')
 
     def eat(self, token_type):
         """
@@ -249,6 +249,12 @@ class Parser(object):
 
     def parse(self):
         node = self.program()
+        if self.current_token.type != EOF:
+            self.error()
+        return node
+
+    def calculate(self):
+        node = self.expr()
         if self.current_token.type != EOF:
             self.error()
         return node
