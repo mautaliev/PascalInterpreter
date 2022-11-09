@@ -33,21 +33,21 @@ EOF = 'EOF'
 
 # зарезервированные ключевые слова
 RESERVED_KEYWORDS = {
-    'BEGIN': Token('BEGIN', 'BEGIN'),
-    'END': Token('END', 'END'),
-    'PROGRAM': Token('PROGRAM', 'PROGRAM'),
-    'VAR': Token('VAR', 'VAR'),
-    'DIV': Token('DIV', 'DIV'),
-    'INTEGER': Token('INTEGER_TYPE', 'INTEGER'),
-    'CHAR': Token('CHAR_TYPE', 'CHAR'),
-    'BOOLEAN': Token('BOOLEAN_TYPE', 'BOOLEAN'),
-    'WRITELN': Token('WRITELN', 'WRITELN'),
-    'CASE': Token('CASE', 'CASE'),
-    'OF': Token('OF', 'OF'),
-    'OR': Token('OR', 'OR'),
-    'AND': Token('AND', 'AND'),
-    'SHL': Token('SHL', 'SHL'),
-    'SHR': Token('SHR', 'SHR')
+    'BEGIN'.lower(): Token('BEGIN', 'BEGIN'),
+    'END'.lower(): Token('END', 'END'),
+    'PROGRAM'.lower(): Token('PROGRAM', 'PROGRAM'),
+    'VAR'.lower(): Token('VAR', 'VAR'),
+    'DIV'.lower(): Token('DIV', 'DIV'),
+    'INTEGER'.lower(): Token('INTEGER_TYPE', 'INTEGER'),
+    'CHAR'.lower(): Token('CHAR_TYPE', 'CHAR'),
+    'BOOLEAN'.lower(): Token('BOOLEAN_TYPE', 'BOOLEAN'),
+    'WRITELN'.lower(): Token('WRITELN', 'WRITELN'),
+    'CASE'.lower(): Token('CASE', 'CASE'),
+    'OF'.lower(): Token('OF', 'OF'),
+    'OR'.lower(): Token('OR', 'OR'),
+    'AND'.lower(): Token('AND', 'AND'),
+    'SHL'.lower(): Token('SHL', 'SHL'),
+    'SHR'.lower(): Token('SHR', 'SHR')
 }
 
 # цифры
