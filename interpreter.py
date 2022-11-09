@@ -78,7 +78,7 @@ class Interpreter(NodeVisitor):
         val = self.global_scope.get(var_name)
         if val:
             return val
-        raise NameError(repr(var_name))
+        raise NameError(f'Использована необъявленная переменная: {repr(var_name)}')
 
     def visit_Program(self, node: Program):
         self.visit(node.declaration_list)

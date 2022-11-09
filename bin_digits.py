@@ -21,6 +21,7 @@ class BinaryDigit:
         self.negative = negative
         self.dec = None
         self.calculate()
+        self.test_max_length()
 
     def calculate(self):
         self.dec = 0
@@ -49,6 +50,8 @@ class BinaryDigit:
 
     @is_binary_digit
     def __truediv__(self, other):
+        if not other.dec:
+            raise Exception('Деление на ноль')
         return BinaryDigit.from_decimal(int(self.dec / other.dec))
 
     @is_binary_digit
@@ -104,3 +107,7 @@ class BinaryDigit:
         binary = bin(decimal if not negative else +decimal)
         string = str(binary)[2 if not negative else 3:]
         return BinaryDigit(string, negative)
+
+    def test_max_length(self):
+        if len(self.data) > 48:
+            raise Exception('Переполнение максимального размера допустимого числа: 6 байт')

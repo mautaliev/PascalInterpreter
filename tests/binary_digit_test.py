@@ -58,3 +58,8 @@ class TestBinaryDigits(TestCase):
             results = [plus, minus, mul, div, shl, shr]
             for result in results:
                 self.assertEqual(result.dec, waited_results[results.index(result)])
+
+    def test_max_length(self):
+        with self.assertRaises(Exception) as exc:
+            bin_digit = BinaryDigit.from_decimal(2 ** 48)
+        self.assertEqual(str(exc.exception.args[0]), 'Переполнение максимального размера допустимого числа: 6 байт')

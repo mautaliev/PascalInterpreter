@@ -4,12 +4,7 @@ from lexer import Lexer
 from interpreter import Interpreter
 from bin_digits import BinaryDigit
 from testing_const import TEST_TYPES_TEXT, TEST_VARIABLES_TEXT, TEST_PRINT_TEXT, TEST_MANAGEMENT_STATEMENT_TEXT, \
-    TEST_OPERATIONS_DATA, TEST_OPTIMIZE_DATA, TEST_ERRORS_DATA
-
-# TODO:
-#  1. Сделать вывод ошибок с указанием на строку
-#  2. Учитывать ; в конце statement_list
-#  3. Обернуть во фласк
+    TEST_OPERATIONS_DATA, TEST_OPTIMIZE_DATA, TEST_ERRORS_DATA, TEST_UNDECLARED_ID
 
 
 class TestInterpreter(TestCase):
@@ -68,3 +63,11 @@ class TestInterpreter(TestCase):
                 interpreter = Interpreter(parser)
                 interpreter.interpret()
             self.assertEqual(exc.exception.args[0], result)
+
+    def test_undeclared_identify(self):
+        with self.assertRaises(Exception) as exc:
+            lexer = Lexer(TEST_UNDECLARED_ID)
+            parser = Parser(lexer)
+            interpreter = Interpreter(parser)
+            interpreter.interpret()
+        self.assertEqual(exc.exception.args[0], "Использована необъявленная переменная: 'b'")

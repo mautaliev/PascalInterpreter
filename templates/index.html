@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>mInterpreter</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+</head>
+<body class="bg-secondary bg-opacity-25">
+    <div class="container-fluid" style="padding: 30px; text-align: center;">
+        <h1>Интерпретатор Pascal</h1>
+    </div>
+    <div class="container-sm align-self-center">
+        <form method="POST" name="callback" action="/run/">
+
+          <textarea class="form-control bg-dark text-white bg-opacity-100" placeholder="Введите исходный код Pascal" id="code_placer" name="code" style="height: 300px; resize: none;" >{% if code %}{{ code }}{% endif %}</textarea>
+
+          {% if has_result %}
+          <textarea class="form-control bg-dark text-white bg-opacity-100" placeholder="Выходной информации нет" name="result" id="result" disabled="disabled" style="height: 100px; resize: none;">{{ print_data }}</textarea>
+          {% endif %}
+
+          <select class="form-select form-select-sm bg-dark text-white bg-opacity-100" id="history_list">
+            {% for item in history %}
+            <option>{{ item }}</option>
+            {% endfor %}
+          </select>
+
+          <div class="d-flex justify-content-between" style="padding: 1% 0">
+              <input class="btn btn-secondary" type="submit" name="run" value="Запуск" style="width: 49.8%;">
+              <input class="btn btn-secondary" type="submit" name="optimize" value="Оптимизировать" style="width: 49.8%;">
+          </div>
+        </form>
+
+        {% if declare_scope and global_scope %}
+        <table class="table table-hover bg-secondary text-white bg-opacity-75">
+            <tr>
+                <th>Название переменной</th>
+                <th>Тип переменной</th>
+                <th>Значение</th>
+            </tr>
+            {% for variable, value in global_scope.items() %}
+            <tr>
+                <td>{{ variable }}</td>
+                <td>{{ declare_scope.get(variable) }}</td>
+                <td>{{ value }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+        {% if optimized_code %}
+            <textarea class="form-control bg-dark text-white bg-opacity-100" placeholder="Оптимизированный код" name="optimized_code" id="" disabled="disabled" style="height: 200px; resize: none;">{{ optimized_code }}</textarea>
+        {% endif %}
+    </div>
+
+    <script>
+        function getSelectValue(e){
+          let selectedValue = document.getElementById("history_list").value;
+          document.getElementById("code_placer").innerHTML = selectedValue;
+        }
+        const list = document.querySelector('#history_list');
+        list.addEventListener('change', function(e) {
+          getSelectValue(e)
+        });
+    </script>
+</body>
+</html>

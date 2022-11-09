@@ -52,3 +52,16 @@ RESERVED_KEYWORDS = {
 
 # цифры
 POSSIBLE_DIGITS = ('0', '1')
+
+# запросы
+SEARCH_HISTORY = """
+    SELECT
+        "requestcode"
+    FROM
+        "history"
+    ORDER BY "requestid" DESC
+    LIMIT 10
+"""
+INSERT_HISTORY_OBJECT = """
+    INSERT INTO history(requestcode) VALUES ('{}'::text)
+"""

@@ -159,3 +159,10 @@ TEST_ERRORS_DATA = {
         END.
     """: 'Ошибка в строке 6: неверный символ'
 }
+TEST_UNDECLARED_ID = """
+    VAR
+        a : INTEGER
+    BEGIN
+        a := b+1
+    END.
+"""
